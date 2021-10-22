@@ -10,9 +10,9 @@ Fire INventory from NCAR (FINN) (https://www.acom.ucar.edu/Data/fire/).
 
 Inputs: 
     
-    rootPath: Path to functions and BRAVESdatabase_main.py
+    rootPath: Path to functions
     
-    outPath: Path to folder with roadLenght....csv
+    outPath: Path to outputs folder
     
     lati: Initial latitude (lower-left)
     
@@ -94,9 +94,9 @@ year = 2019
 
 month = 1
 
-cutORnotFINN = 0
+cutORnotFINN = 0 # 0 for NO and 1 for YES - Cutting original FINN files.
 
-convt = 3600
+convt = 3600 # from kg/h to kg/second. 
 
 speciation  = 'GEOS-CHEM' 
 
