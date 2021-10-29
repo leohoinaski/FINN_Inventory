@@ -6,7 +6,10 @@
                              
                              
 This is the main script to convert daily fire emissions from 
-Fire INventory from NCAR (FINN) (https://www.acom.ucar.edu/Data/fire/).
+Fire INventory from NCAR (FINN) to netCDF files in annual and hourly basis.
+
+(https://www.acom.ucar.edu/Data/fire/).
+Original units are in kg/day and mol/day.
 
 Inputs: 
     
@@ -41,7 +44,7 @@ Inputs:
 Outputs:
     
     'FINNannualEmiss_'+speciation+'_'+fileId+'_'+str(deltaX)+'x'+str(deltaY)+'_'+str(year)+'.nc'
-    
+        (Units are in g/year and mo/year)
     
 External functions:
     cutFINNstatesUtil, FINNgridding, netCDFcreator
@@ -82,9 +85,9 @@ loni = -54 #loni = int(round(bound.minx)) # Initial longitude (lower-left)
 
 lonf = -47 #lonf = int(round(bound.maxx)) # Final longitude (upper-right)
 
-deltaX = 0.01 # Grid resolution/spacing in x direction
+deltaX = 0.05 # Grid resolution/spacing in x direction
 
-deltaY = 0.01 # Grig resolution/spacing in y direction
+deltaY = 0.05 # Grig resolution/spacing in y direction
 
 fileId = 'SC' # Code to identify your output files
 
@@ -96,7 +99,9 @@ month = 1
 
 cutORnotFINN = 0 # 0 for NO and 1 for YES - Cutting original FINN files.
 
-convt = 3600 # from kg/h to kg/second. 
+convt = 24*3600 # from kg/day to kg/second. 
+
+convKg2g = 1000 #kg to g
 
 speciation  = 'GEOS-CHEM' 
 
@@ -136,9 +141,13 @@ if speciation =='GEOS-CHEM':
     dataEmissBB = bb[['ACET','ALD2','BENZ','CH4','CO','CO2','C2H4',
                       'C2H6','C2H2','CH2O','MEK','NH3','NO','NO2','BC',
                       'TPC','OC','SO2','TOLU','VOC','XYLE']].copy() 
-
+    
+    dataEmissBB['BC']=dataEmissBB['BC']*convKg2g
+    dataEmissBB['OC']=dataEmissBB['OC']*convKg2g
+    dataEmissBB['TPC']=dataEmissBB['TPC']*convKg2g
+    
 # Converting to the right unit of measurement
-dataEmissBB = dataEmissBB/convt 
+dataEmissBB = dataEmissBB 
 
 # cd to the main folder
 os.chdir(rootPath)
@@ -188,7 +197,7 @@ dates['year'] = year
 dates['month'] = 1
 dates['day'] = 1
 dates['hour'] = 00
-createNETCDFtemporalFINN(outPath,name,dataBB,xv,yv,y,x,dates,month,speciation)
+createNETCDFtemporalFINN(outPath,name,dataBB,xv,yv,y,x,dates,month,speciation,'Annual')
 
 #%% Calling netcdf creator
 
